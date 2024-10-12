@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        td:nth-child(2) input {
+            display: inline-block;
+            width: 50px;
+        }
+        td:nth-child(2) select {
+            display: inline-block;
+            width: 58px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h2>Mortgage Calculator</h2>
+
+    <!-- Input Fields for Mortgage Parameters -->
+    <form id="mortgageForm">
+        <table>
+            <tr>
+                <td>
+                    <label for="homePrice">Home Price (k):</label>
+                </td>
+                <td>
+                    <input type="number" id="homePrice" name="homePrice" step="1" value="800" oninput="calculateAndPlot()">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="homebuyerDown">Homebuyer Down (k):</label>
+                </td>
+                <td>
+                    <input type="number" id="homebuyerDown" name="homebuyerDown" step="1" value="0" oninput="calculateAndPlot()">
+                </td>
+            </tr>
+                <td>
+                    <label for="heapPayment">HEAP Payment (k):</label>
+                </td>
+                <td>
+                    <input type="number" id="heapPayment" name="heapPayment" step="1" value="160" oninput="calculateAndPlot()">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="interestRate">Interest Rate (%):</label>
+                </td>
+                <td>
+                    <input type="number" id="interestRate" name="interestRate" step="0.1" value="7" oninput="calculateAndPlot()">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="loanTerm">Loan Term (years):</label>
+                </td>
+                <td>
+                    <select id="loanTerm" name="loanTerm" onchange="calculateAndPlot()">
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="30" selected>30</option>
+                        <option value="40">40</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="projectedAppreciationPct">Extra Principal Payment:</label>
+                </td>
+                <td>
+                    <input type="number" id="projectedAppreciationPct" name="projectedAppreciationPct" step="0.1" value="3.5" oninput="calculateAndPlot()">
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <!-- Canvases for different charts -->
+    <h3>Stats</h3>
+    <table id="stats"></table>
+
+    <h3>Equity Over Time</h3>
+    <div id="equityChart" style="max-width: 600px; max-height: 300px;"></div>
+
+    <script type="module">
+        import { calculateOverYears } from './src/js/heap.js';
+        import { prettifyNumber } from './src/js/pretty.js';
+
+        function calculateAndPlot() {
+            const formData = new FormData(document.getElementById('mortgageForm'));
+            const params = {
+                homePrice: parseFloat(formData.get('homePrice') * 1000),
+                homebuyerDown: parseFloat(formData.get('homebuyerDown') * 1000),
+                heapPayment: parseFloat(formData.get('heapPayment') * 1000),
+                interestRate: parseFloat(formData.get('interestRate')) / 100,
+                loanTerm: parseFloat(formData.get('loanTerm')),
+                equityAppreciationRate: parseFloat(formData.get('projectedAppreciationPct')) / 100,
+            };
+
+            // Calculate the mortgage data
+            let [r, stats] = calculateOverYears(params);
+
+            // print the stats in a table
+            const table = document.getElementById('stats');
+            table.innerHTML = '';
+            for (const [key, value] of Object.entries(stats)) {
+                const row = table.insertRow();
+                row.insertCell().textContent = key;
+                row.insertCell().textContent = prettifyNumber(value, 1, 3);
+            }
+
+            // Draw all charts
+            drawStackedAreaChart(r);
+        }
+        function drawStackedAreaChart(data) {
+            const labels = data.years;
+            const remainingPrincipal = data.remainingPrincipal;
+            const homeownerEquity = data.homeownerEquityWithAppreciation;
+            const heapEquity = data.heapEquity;
+            const totalInterestPaid = data.totalInterestPaid.map(value => -value);  // Make interest paid negative
+
+            // clear the canvas
+            const el = document.getElementById('equityChart');
+            el.innerHTML = '';
+            const canvas = document.createElement('canvas');
+            canvas.id = 'equityChart';
+            const ctx = canvas.getContext('2d');
+            el.appendChild(canvas);
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Total Interest Paid to Bank',
+                            data: totalInterestPaid,
+                            backgroundColor: 'rgba(255, 159, 64, 0.5)',  // Interest is shown as part of bank's share
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            fill: true,
+                            yAxisID: 'y',  // Primary y-axis for equity and principal
+                        },
+                        {
+                            label: 'Remaining Principal (Bank)',
+                            data: remainingPrincipal,
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',  // Bank's share (bottom layer)
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            fill: true,
+                            yAxisID: 'y',
+                        },
+                        {
+                            label: 'Homeowner Equity',
+                            data: homeownerEquity,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',  // Homeowner's share (middle layer)
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            fill: true,
+                            yAxisID: 'y',
+                        },
+                        {
+                            label: 'Investor Equity (HEAP)',
+                            data: heapEquity,
+                            backgroundColor: 'rgba(0, 192, 0, 0.5)',  // Investor's share (top layer)
+                            borderColor: 'rgba(0, 192, 0, 1)',
+                            fill: true,
+                            yAxisID: 'y',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Years' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Amount ($)' },
+                            stacked: true,
+                            min: Math.min(...totalInterestPaid), // Ensure room for the negative interest area
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        legend: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+        calculateAndPlot();
+
+
+        window.calculateAndPlot = calculateAndPlot;
+        export { calculateAndPlot };
+
+    </script>
+</body>
+</html>

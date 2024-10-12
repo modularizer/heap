@@ -203,10 +203,12 @@ function calculateOverMonths({
     equityAppreciationRate=0.04,
     loanTerm=30,
     extraPrincipalPayment=0,
+    hifMonthlyRate=0.001,
     key=undefined,
     month=undefined,
     year=undefined,
 }){
+    if (homebuyerDown == 0){homebuyerDown = 1; heapPayment -= 1;}
     extraPrincipalPayment = extraPrincipalPayment || 0;
 
     let principal = homePrice - homebuyerDown - heapPayment;
@@ -229,6 +231,13 @@ function calculateOverMonths({
     const totalInterestPaid = [0];
     const months = [0];
     const homePriceWithAppreciation = [homePrice];
+    const hifPayments = [0];
+    const homeownerPct = [homebuyerDown / homePrice];
+    const heapPct = [heapPayment / homePrice];
+    const bankPct = [(homePrice - homebuyerDown - heapPayment) / homePrice];
+    const theoreticalEquivalentInvestorHomeEquity = [heapPayment];
+    const theoreticalBacktracedRentToInvestor = [0];
+    const equivalentMonthlyRentToInvestor = [0];
 
     const homeownerAppreciationRate = [];
     const heapAppreciationRate = [];
@@ -240,30 +249,59 @@ function calculateOverMonths({
     let equityAppreciation = 0;
     let homeAppreciation = 0;
     let heapAppreciation = 0;
+    let interestPayment = 0;
+    let principalPayment = 0;
+    let hifPayment = 0;
+
+    let lastHomePrice = homePrice;
+    let currentHomePrice = homePrice;
+
+    let unitRentPaymentSum = 0;
+    const unitRentPayments = [];
+    let unitRent = 1;
 
     for (let i = 0; i < loanTerm * 12; i++){
+        unitRent = unitRent * (1 + monthlyEquityAppreciationRate);
+        unitRentPayments.push(unitRent);
+        unitRentPaymentSum += unitRent;
+
         months.push(i + 1);
 
-        let interestPayment = remainingPrincipal[i] * monthlyInterestRate;
+        homeAppreciation = homePriceWithAppreciation[i] * monthlyEquityAppreciationRate;
+        currentHomePrice += homeAppreciation;
+
+        theoreticalEquivalentInvestorHomeEquity.push(theoreticalEquivalentInvestorHomeEquity[i] * (1 + monthlyEquityAppreciationRate));
+
+
+        interestPayment = remainingPrincipal[i] * monthlyInterestRate;
         interestPayments.push(interestPayment);
 
-        let principalPayment = monthlyPayment - interestPayment;
+        principalPayment = monthlyPayment - interestPayment;
         principalPayments.push(principalPayment);
 
-        homePriceWithAppreciation.push(homePriceWithAppreciation[i] * (1 + monthlyEquityAppreciationRate));
 
-        equityAppreciation = equity * monthlyEquityAppreciationRate;
-        homeownerEquityAppreciation.push(equityAppreciation);
+        hifPayment = lastHomePrice * hifMonthlyRate;
+        hifPayments.push(hifPayment);
+        homePriceWithAppreciation.push(currentHomePrice);
 
+        const pp = monthlyPayment - interestPayment;
+
+        equityAppreciation = equityWithAppreciation * monthlyEquityAppreciationRate;
         equityWithAppreciation += equityAppreciation;
+        equityWithAppreciation += pp;
 
+        homeownerEquityAppreciation.push(equityAppreciation);
         homeownerAppreciationRate.push(( 1 + equityAppreciation / equity)**12 - 1);
-
         homeownerEquityWithAppreciation.push(equityWithAppreciation);
 
         homeAppreciation = homePriceWithAppreciation[i] * monthlyEquityAppreciationRate;
         heapAppreciation = homeAppreciation - equityAppreciation;
         heapEquity.push(heapEquity[i] + heapAppreciation);
+
+        const theoreticalSurplus = heapEquity[i] - theoreticalEquivalentInvestorHomeEquity[i];
+        const theoreticalRent = theoreticalSurplus / unitRentPaymentSum;
+        theoreticalBacktracedRentToInvestor.push(theoreticalRent);
+
 
         heapAppreciationRate.push((1 + heapAppreciation / heapEquity[i])**12 - 1);
 
@@ -280,13 +318,19 @@ function calculateOverMonths({
         cumulativeTotalInterestPaid += interestPayment;
         totalInterestPaid.push(cumulativeTotalInterestPaid);
 
-        const pp = monthlyPayment - interestPayment;
+
         principalPayments.push(pp);
 
         extraPrincipalPayments.push(extraPrincipalPayment);
         totalPrincipalPayments.push(pp + extraPrincipalPayment);
 
         cumulativeHeapAppreciationRate.push(calculateGrowthRate(heapPayment, heapEquity[i], (i + 1)/12));
+
+        homeownerPct.push(equityWithAppreciation / currentHomePrice);
+        heapPct.push(heapEquity[i] / currentHomePrice);
+        bankPct.push(remainingPrincipal[i] / currentHomePrice);
+
+        lastHomePrice = currentHomePrice;
     }
     heapAppreciationRate.push(equityAppreciationRate);
     homeownerAppreciationRate.push(equityAppreciationRate);
@@ -299,6 +343,8 @@ function calculateOverMonths({
         homeownerEquityAppreciation,
         homeownerEquityWithAppreciation,
         heapEquity,
+        theoreticalEquivalentInvestorHomeEquity,
+        theoreticalBacktracedRentToInvestor,
         remainingPrincipal,
         interestPayments,
         principalPayments,
@@ -308,7 +354,11 @@ function calculateOverMonths({
         homeownerAppreciationRate,
         heapAppreciationRate,
         homePriceWithAppreciation,
-        cumulativeHeapAppreciationRate
+        cumulativeHeapAppreciationRate,
+        hifPayments,
+        homeownerPct,
+        heapPct,
+        bankPct,
     };
 
     if (year){
@@ -316,7 +366,7 @@ function calculateOverMonths({
     }
     if (key){
       key = key.trim().toLowerCase().replaceAll(" ", "");
-      for (let k in r){
+      for (let k of Object.keys(r)){
         if (k.toLowerCase() === key){
             r = r[k];
             if (month){
@@ -339,7 +389,6 @@ function calculateOverYears(params){
     var result = {};
     keys.forEach(key => {
         result[key] = r[key].filter((_, i) => i % 12 === 0);
-
     });
     return result;
 }
@@ -353,9 +402,7 @@ function calculateAll(
     equityAppreciationRate=0.04,
     loanTerm=30,
     extraPrincipalPayment=0,
-    key=undefined,
-    month=undefined,
-    year=undefined,
+    hifMonthlyRate=0.001,
 ) {
    // Example list of dictionaries
    const dicts = calculateOverYears({
@@ -366,10 +413,7 @@ function calculateAll(
     equityAppreciationRate,
     loanTerm,
     extraPrincipalPayment,
-    key,
-    month,
-    year,
-
+    hifMonthlyRate,
    });
    const headers = Object.keys(dicts);
    const length = dicts[headers[0]].length;

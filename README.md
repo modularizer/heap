@@ -4,12 +4,12 @@ Amplified Participation in appreciation of Home Equity for Investor.
 
 ## Base Contract
 #### Basics
-* The homebuyer receives a large down payment (e.g. 20% of the home value) from the investor while still paying a smaller down payment (e.g. 7.5%)
+* The homebuyer receives a large down payment (e.g. 20% of the home value) from the investor while still paying a smaller down payment (e.g. 5%)
 * With a cumulative down payment of 27.5%, the homebuyer can afford a mortgage with a lower interest rate and monthly payment
-* The investor starts off with the equity of their down payment (20%) and the homebuyer starts off with the equity of their down payment (7.5%)
-* As the home appreciates, the homebuyer only receives appreciation on the money they have paid into equity (7.5% + equity payments on their mortgage)
+* The investor starts off with the equity of their down payment (20%) and the homebuyer starts off with the equity of their down payment (5%)
+* As the home appreciates, the homebuyer only receives appreciation on the money they have paid into equity (5% + equity payments on their mortgage)
 * The investor receives the remainder of the appreciation on the home (their portion plus that owned by the bank)
-* The homebuyer retains 100% ownership rights and responsibilities of the home with a few minor exceptions
+* The homebuyer retains ownership rights and responsibilities of the home with a few minor exceptions
 * The homebuyer is responsible for all property taxes, insurance, and maintenance on the home
 * The homebuyer OWES NOTHING to the investor (they have no debt to the investor whatsoever, BUT they do not own 100% of the home, even after the mortgage is paid off)
 * The investor CANNOT foreclose on the homebuyer or force the homeowner to sell the home
@@ -18,7 +18,8 @@ Amplified Participation in appreciation of Home Equity for Investor.
 * The homebuyer is able to afford to buy and live in a home they otherwise couldn't afford
 * The investor beats the real estate market due to their amplified participation in the appreciation of the home
   * If the market goes up 4% per year, the investor would make ~8% per year on their investment over the 30 year term
-  * This is competitive with the stock market and also competitive with buying a home and renting it out
+  * If the Real Estate market goes up 4+%/year, the investor would make a higher percentage than they would by buying a home and renting it out (although not as cash flow, just on paper)
+  * The investment could rival the stock market in terms of returns
 * The contract hopefully has a net positive effect on society and the economy by increasing home ownership rates and reducing wealth inequality
 * The contract is a win-win for both parties and is a much better deal than renting for the homebuyer
 
@@ -90,7 +91,28 @@ Amplified Participation in appreciation of Home Equity for Investor.
   * Any disputes in how the home is sold are resolved by a third party appraiser
 * When accepting an offer on the home, both the homebuyer and the investor must agree to the sale price
   * If the homebuyer and investor cannot agree on the sale price, a third party appraiser determines the sale price
-* If there is any leftover money in the Home Improvement Fund, it is split between the homebuyer and the investor according to their equity shares
+* If there is any leftover money in the Home Improvement Fund, it is split between the homebuyer and the investor according to their equity shares.
+  This is intentional so that the homeowner is not incentivized to hoard money in the HIF instead of using it on improvements.
+* The investor bears the primary reso=ponsibility for closing costs, realtor fees, and other costs associated with the sale of the home
+  * the investor pays `closing_costs * (1 - homeowner_equity)` and the homeowner pays `closing_costs * homeowner_equity`
+  * This setup is because it is in the investor's best interest that the home gets sold, seeing as their rate of return generally starts very high and decreases over time
+
+
+#### Bank Foreclosure
+Investors CANNOT foreclose on the homeowner since the homeowner does not owe the investor any money.
+However, bank foreclosure is a risk the investor takes in exchange for the potential upside of the contract.
+The following is done to reduce that risk:
+1. The homebuyer is vetted in a similar manner to how banks vet homebuyers before giving them a mortgage
+2. The homebuyer is required to make monthly payments into a Home Improvement Fund to ensure the home is maintained and reduce the chances of it decreasing in value
+3. In the event the homebuyer defaults on the mortgage AND the home value is greater than what is owed on the mortgage, the investor is given the right to purchase the home at the current fair market value to prevent the bank from foreclosing on the home
+4. In the event the homebuyer defaults on the mortgage AND the home value is less than what is owed on the mortgage (worst case scenario)...
+  * the investor must work with the bank to attempt to get the bank to agree to a short sale
+  * if the bank agrees to a short sale, the investor is given the right to purchase the home at the current fair market value
+  * if the bank does not agree to a short sale, the investor can bid on the home at the foreclosure auction like any other bidder
+  * if the investor does not buy the home and it gets forclosed on, it is likely the investor will lose some or all of their investment
+5. The investor is able to sell their contract to another investor at any time if they can find a buyer, and the new investor must honor the existing contract
+
+
 
 ## HEAP Joint Investment Fund
 Instead of a single investor, the down payment can be funded by a group of investors, and similarly a single investor can split their investment among multiple homebuyers.
@@ -145,11 +167,6 @@ The investor does not have any liability for the mortgage.
 #### What affect does this have on the real estate market?
 Hopefully, this contract will increase home ownership rates and decrease the number of landlords.
 It is very difficult to predict the long term effects of this contract on the real estate market.
-
-
-
-
-
 
 
 ####  What is the business model?
