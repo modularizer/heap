@@ -33,7 +33,7 @@
                     <label for="homePrice">Home Price (k):</label>
                 </td>
                 <td>
-                    <input type="number" id="homePrice" name="homePrice" step="50" value="800" oninput="calculateAndPlot()">
+                    <input type="number" id="homePrice" name="homePrice" min="0" step="50" value="800" max="5000" oninput="calculateAndPlot()">
                 </td>
             </tr>
             <tr>
@@ -41,14 +41,14 @@
                     <label for="homebuyerDown">Homebuyer Down (k):</label>
                 </td>
                 <td>
-                    <input type="number" id="homebuyerDown" name="homebuyerDown" step="10" value="40" oninput="calculateAndPlot()">
+                    <input type="number" id="homebuyerDown" name="homebuyerDown" step="10" value="40" max="2000" min="0" oninput="calculateAndPlot()">
                 </td>
             </tr>
                 <td>
                     <label for="heapPayment">HEAP Payment (k):</label>
                 </td>
                 <td>
-                    <input type="number" id="heapPayment" name="heapPayment" step="20" value="240" oninput="calculateAndPlot()">
+                    <input type="number" id="heapPayment" name="heapPayment" step="20" value="240" max="1000" min="0" oninput="calculateAndPlot()">
                 </td>
             </tr>
             <tr>
@@ -56,7 +56,7 @@
                     <label for="interestRate">Interest Rate (%):</label>
                 </td>
                 <td>
-                    <input type="number" id="interestRate" name="interestRate" step="0.1" value="7" oninput="calculateAndPlot()">
+                    <input type="number" id="interestRate" name="interestRate" min="0" step="0.1" value="7" max="20" oninput="calculateAndPlot()">
                 </td>
             </tr>
             <tr>
@@ -77,7 +77,7 @@
                     <label for="projectedAppreciationPct">Projected Appreciation Rate (%):</label>
                 </td>
                 <td>
-                    <input type="number" id="projectedAppreciationPct" name="projectedAppreciationPct" step="0.1" value="4" oninput="calculateAndPlot()">
+                    <input type="number" id="projectedAppreciationPct" name="projectedAppreciationPct" min="-20" step="0.1" value="4.8" max="20" oninput="calculateAndPlot()">
                 </td>
             </tr>
 <!--            <tr>-->
