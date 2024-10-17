@@ -15,6 +15,10 @@
             width: 58px;
         }
 
+        tbody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
     </style>
 </head>
 <body>
@@ -29,7 +33,7 @@
                     <label for="homePrice">Home Price (k):</label>
                 </td>
                 <td>
-                    <input type="number" id="homePrice" name="homePrice" step="1" value="800" oninput="calculateAndPlot()">
+                    <input type="number" id="homePrice" name="homePrice" step="50" value="800" oninput="calculateAndPlot()">
                 </td>
             </tr>
             <tr>
@@ -37,14 +41,14 @@
                     <label for="homebuyerDown">Homebuyer Down (k):</label>
                 </td>
                 <td>
-                    <input type="number" id="homebuyerDown" name="homebuyerDown" step="1" value="0" oninput="calculateAndPlot()">
+                    <input type="number" id="homebuyerDown" name="homebuyerDown" step="10" value="40" oninput="calculateAndPlot()">
                 </td>
             </tr>
                 <td>
                     <label for="heapPayment">HEAP Payment (k):</label>
                 </td>
                 <td>
-                    <input type="number" id="heapPayment" name="heapPayment" step="1" value="160" oninput="calculateAndPlot()">
+                    <input type="number" id="heapPayment" name="heapPayment" step="20" value="240" oninput="calculateAndPlot()">
                 </td>
             </tr>
             <tr>
@@ -70,12 +74,20 @@
             </tr>
             <tr>
                 <td>
-                    <label for="projectedAppreciationPct">Extra Principal Payment:</label>
+                    <label for="projectedAppreciationPct">Projected Appreciation Rate (%):</label>
                 </td>
                 <td>
-                    <input type="number" id="projectedAppreciationPct" name="projectedAppreciationPct" step="0.1" value="3.5" oninput="calculateAndPlot()">
+                    <input type="number" id="projectedAppreciationPct" name="projectedAppreciationPct" step="0.1" value="4" oninput="calculateAndPlot()">
                 </td>
             </tr>
+<!--            <tr>-->
+<!--                <td>-->
+<!--                    <label for="bankAppreciationSplitToInvestor">Bank Appreciation Split to Investor (%):</label>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <input type="number" id="bankAppreciationSplitToInvestor" name="bankAppreciationSplitToInvestor" step="10" value="50" oninput="calculateAndPlot()">-->
+<!--                </td>-->
+<!--            </tr>-->
         </table>
     </form>
 
@@ -86,12 +98,20 @@
     <h3>Equity Over Time</h3>
     <div id="equityChart" style="max-width: 600px; max-height: 300px;"></div>
 
+    <h3>Full</h3>
+    <div class="full">
+        <table id="full"></table>
+    </div>
+
     <script type="module">
         import { calculateOverYears } from './src/js/heap.js';
         import { prettifyNumber } from './src/js/pretty.js';
+        import { calculateIntoSheets } from './src/js/heap-sheets.js';
 
         function calculateAndPlot() {
             const formData = new FormData(document.getElementById('mortgageForm'));
+            let down = parseFloat(formData.get('homebuyerDown'));
+            let heap = parseFloat(formData.get('heapPayment'));
             const params = {
                 homePrice: parseFloat(formData.get('homePrice') * 1000),
                 homebuyerDown: parseFloat(formData.get('homebuyerDown') * 1000),
@@ -99,6 +119,7 @@
                 interestRate: parseFloat(formData.get('interestRate')) / 100,
                 loanTerm: parseFloat(formData.get('loanTerm')),
                 equityAppreciationRate: parseFloat(formData.get('projectedAppreciationPct')) / 100,
+                bankAppreciationSplitToInvestor: heap/(down+heap),
             };
 
             // Calculate the mortgage data
@@ -112,6 +133,17 @@
                 row.insertCell().textContent = key;
                 row.insertCell().textContent = prettifyNumber(value, 1, 3);
             }
+
+            const full = document.getElementById('full');
+            full.innerHTML = '';
+            const fullData = calculateIntoSheets(params);
+            for (const row of fullData) {
+                const newRow = full.insertRow();
+                for (const cell of row) {
+                    newRow.insertCell().textContent = prettifyNumber(cell, 1, 3);
+                }
+            }
+
 
             // Draw all charts
             drawStackedAreaChart(r);

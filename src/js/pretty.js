@@ -48,7 +48,8 @@ function prettifyNumber(n, maxDecimals=0, maxPrecedingDigits=3){
         return "0";
     }
     if ((n <= 1)){
-        return Math.round(n * 100, maxDecimals) + "%";
+        return (n * 100).toFixed(maxDecimals) + "%";
+//        return Math.round(n * 100, 1) + "%";
     }
     if (n > (10 ** maxPrecedingDigits)){
         let x = (n / 1000).toFixed(maxDecimals);

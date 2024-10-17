@@ -1,4 +1,5 @@
-// Formulas for mortgage calculations for use in Google Sheets using Google Apps Script
+import {calculateStats, calculateOverYears} from './heap.js';
+
 function calculateStatsIntoSheets(
     homePrice,
     homebuyerDown,
@@ -27,27 +28,10 @@ function calculateStatsIntoSheets(
 }
 
 
-function calculateIntoSheets(
-    homePrice,
-    homebuyerDown,
-    heapPayment,
-    interestRate=0.07,
-    equityAppreciationRate=0.04,
-    loanTerm=30,
-    extraPrincipalPayment=0,
-    hifMonthlyRate=0.001,
-) {
+function calculateIntoSheets(params) {
+    console.log('params', params);
    // Example list of dictionaries
-   const [dicts, stats] = calculateOverYears({
-    homePrice,
-    homebuyerDown,
-    heapPayment,
-    interestRate,
-    equityAppreciationRate,
-    loanTerm,
-    extraPrincipalPayment,
-    hifMonthlyRate,
-   });
+   const [dicts, stats] = calculateOverYears(params);
    const headers = Object.keys(dicts);
    const length = dicts[headers[0]].length;
    let values = [];
@@ -63,5 +47,7 @@ function calculateIntoSheets(
    return result;
 }
 
-
-
+export {
+    calculateStatsIntoSheets,
+    calculateIntoSheets,
+}

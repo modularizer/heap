@@ -4,11 +4,15 @@ Amplified Participation in appreciation of Home Equity for Investor.
 
 ## The Contract
 #### Basics
-* The homebuyer receives a large down payment (e.g. 20% of the home value) from the investor while still paying a smaller down payment (e.g. 7.5%)
-* With a cumulative down payment of 27.5%, the homebuyer can afford a mortgage with a lower interest rate and monthly payment
-* The investor starts off with the equity of their down payment (20%) and the homebuyer starts off with the equity of their down payment (7.5%)
-* As the home appreciates, the homebuyer only receives appreciation on the money they have paid into equity (7.55% + equity payments on their mortgage)
-* The investor receives the remainder of the appreciation on the home (the appreciation on their existing equity plus that owned by the bank)
+* The homebuyer receives a large down payment (e.g. 15-30% of the home value) from the investor while still paying a smaller down payment (e.g. 0-10%)
+* With a cumulative down payment of 20-40%, the homebuyer can afford a mortgage with a lower interest rate and monthly payment
+* The investor starts off with the equity of their down payment (let's say 30%) and the homebuyer starts off with the equity of their down payment (let's say 5%)
+* The appreciation of the home is re-calculated at the end of each month based on their equity shares at the beginning of that month
+  * The homeowner gets the appreciation on their equity share
+  * The investor gets the appreciation on their equity share
+  * The appreciation on the bank's equity share is split between the homeowner and the investor at the same ratio as their initial down payments
+    * e.g. if the homeowner makes no down payment, 100% of the appreciation on the bank's equity goes to the investor
+    * if the homeowner makes a 5% down payment, and the investor makes a 30% down payment, the appreciation on the bank's equity is split 5:30 between the homeowner and the investor
 * The homebuyer retains ownership rights and responsibilities of the home with a few minor exceptions
 * The homebuyer is responsible for all property taxes, insurance, and maintenance on the home
 * The homebuyer OWES NOTHING to the investor (they have no debt to the investor whatsoever, BUT they do not own 100% of the home, even after the mortgage is paid off)
@@ -16,24 +20,35 @@ Amplified Participation in appreciation of Home Equity for Investor.
 
 #### Goals
 * The homebuyer is able to afford to buy and live in a home they otherwise couldn't afford
+* Mortgage payments approximately match the cost of renting a similar home
 * The investor beats the real estate market due to their amplified participation in the appreciation of the home
 * The investor gets a comparable return on investment to buying a home and renting it out without the hassle and risk of being a landlord
 * The investor is able to help one or more homebuyers afford a home they otherwise couldn't afford
 * The contract hopefully has a net positive effect on society and the economy by increasing home ownership rates and reducing wealth inequality
 * The contract is a win-win for both parties and is a much better deal than renting for the homebuyer
 
+#### Target Homebuyers
+1. Renters! Lots of renters who would like to own a home but can't afford to and might not even look into options because they think it is too expensive
+2. Mortgage seekers and down payment assistance seekers who are considering taking on a huge amount of debt to buy a home might be happy to find a way involving way less debt to the bank and none to the investor
+3. People buying cheap homes with far commutes. This contract could enable them to buy a more expensive home closer to work or the area they want to live in
+4. People buying homes too small for their family. This contract could enable them to buy a larger home that fits their family better
+
+#### Target Investors
+1. Future landlords who are considering buying a home and renting it out
+2. People who are saving up to buy a home of their own. By putting their money in an investment which beats the real estate market, they can save up for a home faster
+3. Long-term investors in stocks like Berkshire Hathaway, who are looking for a way to diversify their portfolio and profit from the real estate market
+4. People who are looking for a way to make a positive impact on society and the economy
+
 #### Investor Outcomes
 * The investor makes a profit if the home appreciates
-  * If the market goes up 4% per year, the investor would make ~8% per year on their investment over the 30 year term
+  * If the market goes up 4% per year, the investor would make ~6% per year on their investment over the 30 year term
     * In the early years of the contract, the investor would make a much higher percentage than this
-    * The average holding period for a home is 13 years, in which time the investor would make ~11% ROI/year if the market goes up 4%/year
-    * In the first 13 years, the investor's return on investment would be the same as if they had bought a $160,000 home and rented it out for $1723/month! (the same % ROI of buying a $800,000 home and renting it out for $8615/month!!)
-    * Basically, the investor makes MORE than they would as a landlord, but with less hassle and risk and better societal impact
+    * Basically, the investor makes similar to what they would as a landlord, but with less hassle and risk and better societal impact
 
 #### Homebuyer Outcomes
-* The homebuyer pays ~28% less per month on their mortgage than they would if they had bought the same house without the contract
-* Alternatively, the homebuyer can afford a home that is ~25% more expensive than they could otherwise afford (keeping monthly payments the same)
-* Alternatively, the homebuyer could buy a home ~10-15% more expensive AND save ~10-15% on their monthly mortgage payment
+* The homebuyer pays ~30% less per month on their mortgage than they would if they had bought the same house without the contract
+* Alternatively, the homebuyer can afford a home that is ~43% more expensive than they could otherwise afford (keeping monthly payments the same)
+* Alternatively, the homebuyer could buy a home ~15-20% more expensive AND save ~15-20% on their monthly mortgage payment
 * Homebuyer gets to feel like they own a home, with fewer restrictions than renting, and the ability to pass on the home to their heirs
 * Homebuyer paying a similar monthly rate to renting, but they are building equity in a home and can profit from the appreciation of the home (albeit less than the investor and less than if they owned 100% of the home, but WAY more than if they were renting)
 
@@ -42,6 +57,7 @@ Amplified Participation in appreciation of Home Equity for Investor.
 * In order to ensure the home is maintained, the homebuyer is required to make monthly payments into a Home Improvement Fund 
   * The exact amount is part of the contract and is based on the value of the home and the expected maintenance costs
   * Current guidelines suggest 1% of the home value per year or $1 per square foot per year, but $1/sqft/year is possibly too low and 1% of the home value is possibly too high (especially in areas where the land is worth more than the home)
+  * Let's say the homebuyer is required to pay ~$1.5/sqft/year into the HIF, but this would probably set per region and per home based on the expected maintenance costs (due to age, size, location, etc.)
   * The HIF is jointly owned by the homebuyer and the investor at the same ratio as the equity in the home
   * The HIF can be used for qualifying home maintenance, repairs, and improvements at the discretion of the homebuyer
   * The HIF is split between the homebuyer and the investor when the home is sold according to their equity shares
@@ -62,7 +78,7 @@ Amplified Participation in appreciation of Home Equity for Investor.
   * The investor sells back some or all of their contract to the homebuyer
 * The investor CANNOT force the homebuyer to sell the home
 * The investor CAN sell their contract (rights to the appreciation) to another investor
-  * HOWEVER, the homebuyer has the right of first refusal to buy out the investor at the same price as the other investor
+  * the homebuyer has the right of first refusal to buy out the investor at the same price as the other investor
   * If the homebuyer does not buy out the investor, the new investor must honor the existing contract
 
 #### Cash Flow
@@ -105,7 +121,7 @@ Amplified Participation in appreciation of Home Equity for Investor.
    * other permanent or long-term changes that significantly affect the value of the home
  * [Negotiable] Owning >[x] number of dogs/cats/pets
    * while terms of most contracts are negotiable and hopefully very lenient, there may be certain restrictions aimed at reducing significant depreciation of the home and prevent cat lady / hoarder situations
-   * e.g. some constract may limit the number of pets to reduce the risk of pet damage to the home (potentially having >3 pets could require approval or negotiations with the investor)
+   * e.g. some contracts may limit the number of pets to reduce the risk of pet damage to the home (potentially having >3 pets could require approval or negotiations with the investor)
  * [Negotiable] Right to rent the home
   * this may vary from contract to contract and the % of rental income that goes to the investor may vary as well
   * in some contracts, renting the home may not be allowed at all
@@ -192,7 +208,7 @@ Instead of a single investor, the down payment can be funded by a group of inves
 ### 1. The "HEAP Payment" amount paid by the investor
   * The ratio of the mortgage amount to the investor's down payment amount determines both the investor's "participation rate" in the real estate market
   * With a high "HEAP Payment", e.g. 40% of the home value, the investor would have a lower participation rate in the real estate market but also lower risks
-    * They may only beat the market by 1.5-2x instead of 2-3x, BUT they also have lower downside if the market goes down
+    * They may only beat the market by 1.25-1.5x instead of 1.5-2x, BUT they also have lower downside if the market goes down
     * The homeowner would have a much lower mortgage so presumably more money to spend maintining the home and also a lower risk of defaulting on the mortgage
     * With a high "HEAP Payment", the investor would likely be able to negotiate more favorable terms, such as...
       * A higher percentage of potential rental income
@@ -250,7 +266,7 @@ Options include:
 Some contracts may have an end of term clause, where the homebuyer must buy out the investor's share at the end of the term.
 Possible markes for that clause could be...
 1. NEVER, the contract continues indefinitely until the home is sold
-2. When the investor's share of the home is >50%
+2. When the investor's share of the home is >=50%
 3. When the mortgage is fully paid off
 4. After a certain number of years, e.g. 30 years
 5. When the homebuyer dies
@@ -259,11 +275,12 @@ Possible markes for that clause could be...
 Because end of term clauses would typically not be in the best interest of the homebuyer, they could potentially have the deal sweetened by...
 * The investor agreeing to certain penalties for invoking the end of term clause
   * e.g. the investor paying all closing costs, realtor fees, and other costs associated with the sale of the home
-  * e.g. the investor paying a certain percentage of the appreciation of the home to the homebuyer
 * The investor paying a higher initial HEAP payment
 * The investor agreeing to a lower percentage of rental income
 
 If the home is purchased as a starter home, the homeowner may be happy to agree to certain end of term clauses in exchange for extra negotiating power in the initial contract.
+### 9. Closing costs
+By default, the closing costs are split by equity share ratio, but this could be a point of negotiation.
 
 
 

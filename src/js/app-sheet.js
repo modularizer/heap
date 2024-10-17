@@ -203,11 +203,24 @@ function calculateOverMonths({
     equityAppreciationRate=0.04,
     loanTerm=30,
     extraPrincipalPayment=0,
-    hifMonthlyRate=0.001,
+    bankAppreciationSplitToInvestor=0.5,
     key=undefined,
     month=undefined,
     year=undefined,
 }){
+    let params = {
+        homePrice,
+        homebuyerDown,
+        heapPayment,
+        interestRate,
+        equityAppreciationRate,
+        loanTerm,
+        extraPrincipalPayment,
+    };
+
+    let hifYearlyInitial = 2000 + ((homePrice>300000)?(Math.max(homePrice-300000, 300000))*0.004:0) + ((homePrice>600000)?(homePrice-600000)*0.002:0);
+    let hifMonthlyRate = (hifYearlyInitial / 12) / homePrice;
+
     if (homebuyerDown == 0){homebuyerDown = 1; heapPayment -= 1;}
     extraPrincipalPayment = extraPrincipalPayment || 0;
 
@@ -249,6 +262,7 @@ function calculateOverMonths({
     let equityAppreciation = 0;
     let homeAppreciation = 0;
     let heapAppreciation = 0;
+    let bankAppreciation = 0;
     let interestPayment = 0;
     let principalPayment = 0;
     let hifPayment = 0;
@@ -261,40 +275,40 @@ function calculateOverMonths({
     let unitRent = 1;
 
     for (let i = 0; i < loanTerm * 12; i++){
+        // compute the "unit rent" metric which scales as the home price appreciates
         unitRent = unitRent * (1 + monthlyEquityAppreciationRate);
         unitRentPayments.push(unitRent);
         unitRentPaymentSum += unitRent;
-
         months.push(i + 1);
 
         homeAppreciation = homePriceWithAppreciation[i] * monthlyEquityAppreciationRate;
+        bankAppreciation = homeAppreciation * (principal / currentHomePrice);
+
         currentHomePrice += homeAppreciation;
+        principal -= principalPayment;
+        equity += principalPayment;
 
         theoreticalEquivalentInvestorHomeEquity.push(theoreticalEquivalentInvestorHomeEquity[i] * (1 + monthlyEquityAppreciationRate));
-
 
         interestPayment = remainingPrincipal[i] * monthlyInterestRate;
         interestPayments.push(interestPayment);
 
         principalPayment = monthlyPayment - interestPayment;
-        principalPayments.push(principalPayment);
 
 
         hifPayment = lastHomePrice * hifMonthlyRate;
         hifPayments.push(hifPayment);
         homePriceWithAppreciation.push(currentHomePrice);
 
-        const pp = monthlyPayment - interestPayment;
 
-        equityAppreciation = equityWithAppreciation * monthlyEquityAppreciationRate;
+        equityAppreciation = equityWithAppreciation * monthlyEquityAppreciationRate + (1 - bankAppreciationSplitToInvestor) * bankAppreciation;
         equityWithAppreciation += equityAppreciation;
-        equityWithAppreciation += pp;
+        equityWithAppreciation += principalPayment;
 
         homeownerEquityAppreciation.push(equityAppreciation);
         homeownerAppreciationRate.push(( 1 + equityAppreciation / equity)**12 - 1);
         homeownerEquityWithAppreciation.push(equityWithAppreciation);
 
-        homeAppreciation = homePriceWithAppreciation[i] * monthlyEquityAppreciationRate;
         heapAppreciation = homeAppreciation - equityAppreciation;
         heapEquity.push(heapEquity[i] + heapAppreciation);
 
@@ -305,8 +319,7 @@ function calculateOverMonths({
 
         heapAppreciationRate.push((1 + heapAppreciation / heapEquity[i])**12 - 1);
 
-        principal -= principalPayment;
-        equity += principalPayment;
+
 
 
         bareHomeownerEquity.push(equity);
@@ -319,10 +332,10 @@ function calculateOverMonths({
         totalInterestPaid.push(cumulativeTotalInterestPaid);
 
 
-        principalPayments.push(pp);
+        principalPayments.push(principalPayment);
 
         extraPrincipalPayments.push(extraPrincipalPayment);
-        totalPrincipalPayments.push(pp + extraPrincipalPayment);
+        totalPrincipalPayments.push(principalPayment + extraPrincipalPayment);
 
         cumulativeHeapAppreciationRate.push(calculateGrowthRate(heapPayment, heapEquity[i], (i + 1)/12));
 
@@ -336,7 +349,7 @@ function calculateOverMonths({
     homeownerAppreciationRate.push(equityAppreciationRate);
     cumulativeHeapAppreciationRate.push(calculateGrowthRate(heapPayment, heapEquity[loanTerm * 12], loanTerm));
     let years = months.map(m => m / 12);
-    r = {
+    let r = {
         months,
         years,
         bareHomeownerEquity,
@@ -360,6 +373,8 @@ function calculateOverMonths({
         heapPct,
         bankPct,
     };
+    console.log(r);
+    const stats = _calcStats(params, r);
 
     if (year){
         month = year * 12;
@@ -380,21 +395,127 @@ function calculateOverMonths({
     if (month){
         r = r.map((x, i) => ({month: month[i], value: x}));
     }
-    return r;
+
+    if (key){
+        for (let k of Object.keys(stats)){
+            if (k.toLowerCase() === key){
+                return stats[k];
+            }
+        }
+    }
+    return [r, stats]
+}
+
+function _calcStats(params, data){
+    // Calculate the years to 50% investor equity
+    let mp =data.principalPayments[1] + data.interestPayments[1];
+    let ehp = calculateEquivalentHomePrice(
+        params.homebuyerDown,
+        mp,
+        params.interestRate,
+        params.loanTerm,
+    );
+    let buyingPowerIncrease = (params.homePrice - ehp) / ehp;
+    let mpWithoutHelp = calculateMonthlyPayment(
+        params.homePrice - params.homebuyerDown,
+        params.interestRate,
+        params.loanTerm,
+    );
+
+    return {
+        monthlyPayment: mp,
+        startingHIFMonthlyPayment: data.hifPayments[1],
+        endingHIFMonthlyPayment: data.hifPayments[data.hifPayments.length - 1],
+
+        equivalentHomePrice: ehp,
+        buyingPowerIncrease: buyingPowerIncrease,
+        monthlyPaymentWithoutHelp: mpWithoutHelp,
+        monthlyPaymentDecreasePct: (mpWithoutHelp - mp) / mpWithoutHelp,
+
+
+        finalHomePrice: data.homePriceWithAppreciation[data.homePriceWithAppreciation.length - 1],
+        finalInvestorEquity: data.heapEquity[data.heapEquity.length - 1],
+        finalInvestorEquityPct: data.heapPct[data.heapPct.length - 1],
+        finalHomeownerEquity: data.homeownerEquityWithAppreciation[data.homeownerEquityWithAppreciation.length - 1],
+        finalHomeownerEquityPct: data.homeownerPct[data.homeownerPct.length - 1],
+
+        yearsTo50PercentInvestorEquity: data.heapPct.map((pct, i) => {
+            if (pct >= 0.5) {
+                return i;
+            }
+        }).filter(i => i !== undefined)[0] / 12,
+
+        fullTermHEAPInterest: data.cumulativeHeapAppreciationRate[data.cumulativeHeapAppreciationRate.length - 1],
+        theoreticalBacktracedRentToInvestor: data.theoreticalBacktracedRentToInvestor[data.theoreticalBacktracedRentToInvestor.length - 1],
+        equivalentMarketRentToInvestor: (data.theoreticalBacktracedRentToInvestor[data.theoreticalBacktracedRentToInvestor.length - 1]) * (1 / data.heapPct[0])
+    };
+}
+
+function calculateStats({
+    homePrice,
+    homebuyerDown,
+    heapPayment,
+    interestRate=0.07,
+    equityAppreciationRate=0.04,
+    loanTerm=30,
+    extraPrincipalPayment=0,
+    bankAppreciationSplitToInvestor=0.5,
+}){
+    const [_, stats] = calculateOverMonths({
+        homePrice,
+        homebuyerDown,
+        heapPayment,
+        interestRate,
+        equityAppreciationRate,
+        loanTerm,
+        extraPrincipalPayment,
+        bankAppreciationSplitToInvestor,
+    });
+    return stats;
 }
 
 function calculateOverYears(params){
-    var r = calculateOverMonths(params);
+    var [r, stats] = calculateOverMonths(params);
     var keys = Object.keys(r);
     var result = {};
     keys.forEach(key => {
         result[key] = r[key].filter((_, i) => i % 12 === 0);
     });
+    return [result, stats];
+}
+
+
+
+// Formulas for mortgage calculations for use in Google Sheets using Google Apps Script
+function calculateStatsIntoSheets(
+    homePrice,
+    homebuyerDown,
+    heapPayment,
+    interestRate=0.07,
+    equityAppreciationRate=0.04,
+    loanTerm=30,
+    extraPrincipalPayment=0,
+    hifMonthlyRate=0.001,
+) {
+    const stats = calculateStats({
+        homePrice,
+        homebuyerDown,
+        heapPayment,
+        interestRate,
+        equityAppreciationRate,
+        loanTerm,
+        extraPrincipalPayment,
+        hifMonthlyRate,
+    });
+    const result = [];
+    for (let key in stats){
+        result.push([key, stats[key]]);
+    }
     return result;
 }
 
 
-function calculateAll(
+function calculateIntoSheets(
     homePrice,
     homebuyerDown,
     heapPayment,
@@ -405,7 +526,7 @@ function calculateAll(
     hifMonthlyRate=0.001,
 ) {
    // Example list of dictionaries
-   const dicts = calculateOverYears({
+   const [dicts, stats] = calculateOverYears({
     homePrice,
     homebuyerDown,
     heapPayment,

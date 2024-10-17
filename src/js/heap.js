@@ -9,6 +9,7 @@ function calculateOverMonths({
     equityAppreciationRate=0.04,
     loanTerm=30,
     extraPrincipalPayment=0,
+    bankAppreciationSplitToInvestor=0.5,
     key=undefined,
     month=undefined,
     year=undefined,
@@ -67,6 +68,7 @@ function calculateOverMonths({
     let equityAppreciation = 0;
     let homeAppreciation = 0;
     let heapAppreciation = 0;
+    let bankAppreciation = 0;
     let interestPayment = 0;
     let principalPayment = 0;
     let hifPayment = 0;
@@ -79,14 +81,18 @@ function calculateOverMonths({
     let unitRent = 1;
 
     for (let i = 0; i < loanTerm * 12; i++){
+        // compute the "unit rent" metric which scales as the home price appreciates
         unitRent = unitRent * (1 + monthlyEquityAppreciationRate);
         unitRentPayments.push(unitRent);
         unitRentPaymentSum += unitRent;
-
         months.push(i + 1);
 
         homeAppreciation = homePriceWithAppreciation[i] * monthlyEquityAppreciationRate;
+        bankAppreciation = homeAppreciation * (principal / currentHomePrice);
+
         currentHomePrice += homeAppreciation;
+        principal -= principalPayment;
+        equity += principalPayment;
 
         theoreticalEquivalentInvestorHomeEquity.push(theoreticalEquivalentInvestorHomeEquity[i] * (1 + monthlyEquityAppreciationRate));
 
@@ -101,7 +107,7 @@ function calculateOverMonths({
         homePriceWithAppreciation.push(currentHomePrice);
 
 
-        equityAppreciation = equityWithAppreciation * monthlyEquityAppreciationRate;
+        equityAppreciation = equityWithAppreciation * monthlyEquityAppreciationRate + (1 - bankAppreciationSplitToInvestor) * bankAppreciation;
         equityWithAppreciation += equityAppreciation;
         equityWithAppreciation += principalPayment;
 
@@ -109,7 +115,6 @@ function calculateOverMonths({
         homeownerAppreciationRate.push(( 1 + equityAppreciation / equity)**12 - 1);
         homeownerEquityWithAppreciation.push(equityWithAppreciation);
 
-        homeAppreciation = homePriceWithAppreciation[i] * monthlyEquityAppreciationRate;
         heapAppreciation = homeAppreciation - equityAppreciation;
         heapEquity.push(heapEquity[i] + heapAppreciation);
 
@@ -120,8 +125,7 @@ function calculateOverMonths({
 
         heapAppreciationRate.push((1 + heapAppreciation / heapEquity[i])**12 - 1);
 
-        principal -= principalPayment;
-        equity += principalPayment;
+
 
 
         bareHomeownerEquity.push(equity);
@@ -261,6 +265,7 @@ function calculateStats({
     equityAppreciationRate=0.04,
     loanTerm=30,
     extraPrincipalPayment=0,
+    bankAppreciationSplitToInvestor=0.5,
 }){
     const [_, stats] = calculateOverMonths({
         homePrice,
@@ -270,6 +275,7 @@ function calculateStats({
         equityAppreciationRate,
         loanTerm,
         extraPrincipalPayment,
+        bankAppreciationSplitToInvestor,
     });
     return stats;
 }
